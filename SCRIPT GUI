@@ -1,0 +1,239 @@
+local Rayfield = loadstring(game:HttpGet('https://[Log in to view URL]'))()
+
+local Window = Rayfield:CreateWindow({
+   Name = "FF2 jp script",
+   LoadingTitle = "script loading",
+   LoadingSubtitle = "by SHDDER",
+   Theme = "Default", -- Check https://[Log in to view URL]
+
+   DisableRayfieldPrompts = false,
+   DisableBuildWarnings = false, -- Prevents Rayfield from warning when the script has a version mismatch with the interface
+
+   ConfigurationSaving = {
+      Enabled = true,
+      FolderName = nil, -- Create a custom folder for your hub/game
+      FileName = "Big Hub"
+   },
+
+   Discord = {
+      Enabled = false, -- Prompt the user to join your Discord server if their executor supports it
+      Invite = "noinvitelink", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ABCD would be ABCD
+      RememberJoins = true -- Set this to false to make them join the discord every time they load it up
+   },
+
+   KeySystem = false, -- Set this to true to use our key system
+   KeySettings = {
+      Title = "Untitled",
+      Subtitle = "Key System",
+      Note = "No method of obtaining the key is provided", -- Use this to tell the user how to get a key
+      FileName = "Key", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
+      SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
+      GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
+      Key = {"Hello"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
+   }
+})
+
+-- local MainTab = Window:CreateTab("HOME", nil) -- Title, Image
+MainSection:Set("main")
+
+Rayfield:Notify({
+   Title = "you exucted",
+   Content = "very medicore gui",
+   Duration = 5,
+   Image = nil,
+   Actions = { -- Notification Buttons
+
+      Ignore = { -- Duplicate this table (or remove it) to add and remove buttons to the notification.
+         Name = "Okay!",
+         Callback = function()
+            print("The user tapped Okay!")
+         end
+      },
+
+},
+})
+
+local Button = MainTab:CreateButton({
+   Name = "infinite jump",
+   Callback = function()
+  -- Infinite Jump Script for Roblox (LocalScript)
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+
+-- This variable will control whether the player can keep jumping or not
+local canJump = true
+
+-- Function to handle jump logic
+local function onJumpRequest()
+    if humanoid:GetState() == Enum.HumanoidStateType.Physics and canJump then
+        humanoid:ChangeState(Enum.HumanoidStateType.Physics) -- Prevents normal jump state transition
+        humanoid:Move(Vector3.new(0, 100, 0)) -- Apply a custom jump force
+    end
+end
+
+-- Connect the jump request to the function
+game:GetService("UserInputService").JumpRequest:Connect(onJumpRequest)
+
+-- Listen for player respawn (to reset the script if needed)
+player.CharacterAdded:Connect(function(newCharacter)
+    character = newCharacter
+    humanoid = character:WaitForChild("Humanoid")
+end)
+
+   end,
+})
+
+local Slider = MainTab:CreateSlider({
+   Name = "Walkspeed",
+   Range = {0, 300},
+   Increment = 1,
+   Suffix = "speed",
+   CurrentValue = 16,
+   Flag = "Slider1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+        game.players.LocalPlayer.Character.Humanoid.WalkSpeed = (Value)
+   end,
+})
+
+local Input = MainTab:CreateInput({
+   Name = "JumpPower",
+   CurrentValue = "",
+   PlaceholderText = "0-300",
+   RemoveTextAfterFocusLost = true,
+   Flag = "Input1",
+   Callback = function(Text)
+        game.players.LocalPlayer.Character.Humanoid.JumpPower = (Text)
+   end,
+})
+
+local Slider = MainTab:CreateSlider({
+   Name = "ms lol",
+   Range = {0, 300},
+   Increment = 10,
+   Suffix = "Bananas",
+   CurrentValue = 10,
+   Flag = "Slider1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+-- LocalScript to create a "Magnet" effect for catching the football
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+local userInputService = game:GetService("UserInputService")
+
+-- Settings
+local magnetRadius = 50 -- The maximum distance at which the magnet will pull the ball
+local magnetStrength = 100 -- How strong the magnet effect is (higher = faster)
+
+-- Function to find the closest football
+local function getClosestFootball()
+    local closestBall = nil
+    local shortestDistance = magnetRadius
+    for _, obj in pairs(workspace:GetChildren()) do
+        if obj:IsA("Part") and obj.Name == "Football" then  -- Make sure to change "Football" to your ball's name
+            local distance = (obj.Position - humanoidRootPart.Position).Magnitude
+            if distance < shortestDistance then
+                closestBall = obj
+                shortestDistance = distance
+            end
+        end
+    end
+    return closestBall
+end
+
+-- Function to pull the ball towards the player
+local function applyMagnetEffect(ball)
+    if not ball or not ball:IsA("Part") then return end
+
+    -- Create a BodyPosition to move the ball toward the player
+    local bodyPosition = ball:FindFirstChild("BodyPosition")
+    if not bodyPosition then
+        bodyPosition = Instance.new("BodyPosition")
+        bodyPosition.MaxForce = Vector3.new(4000, 4000, 4000)
+        bodyPosition.D = 50 -- Dampening factor (controls the speed of the magnet)
+        bodyPosition.P = 10000 -- Power of the magnet effect
+        bodyPosition.Parent = ball
+    end
+
+    -- Set the target position of the BodyPosition to the player's HumanoidRootPart
+    bodyPosition.Position = humanoidRootPart.Position
+end
+
+-- Main loop to detect and apply magnet effect when button is pressed
+userInputService.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
+
+    -- If the player presses the "E" key (change this to your preferred key)
+    if input.KeyCode == Enum.KeyCode.E then
+        local closestBall = getClosestFootball()
+        if closestBall then
+            -- Apply magnet effect to the closest football
+            applyMagnetEffect(closestBall)
+        end
+    end
+end)
+
+
+   end,
+})
+
+local Button = MainTab:CreateButton({
+   Name = "auto catch",
+   Callback = function()
+        local Button = Tab:CreateButton({
+   Name = "Button Example",
+   Callback = function()
+-- LocalScript for auto catch (This is for learning purposes, do not use for exploiting)
+
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+local humanoid = character:WaitForChild("Humanoid")
+local ball = nil  -- Placeholder for the football object
+local catchDistance = 10  -- Distance at which to "catch" the ball
+
+-- Function to detect the ball and auto-align the player
+local function findBall()
+    -- Loop through the workspace and find the football
+    for _, obj in ipairs(workspace:GetChildren()) do
+        if obj:IsA("Part") and obj.Name == "Football" then
+            ball = obj
+            return
+        end
+    end
+end
+
+-- Function to move the player toward the ball (Auto alignment)
+local function moveToBall()
+    if ball then
+        local direction = (ball.Position - humanoidRootPart.Position).Unit  -- Direction vector
+        local targetPosition = humanoidRootPart.Position + direction * catchDistance
+        humanoid:MoveTo(targetPosition)  -- Move the player toward the ball
+    end
+end
+
+-- Function to simulate catching action (simplified)
+local function catchBall()
+    if ball and (ball.Position - humanoidRootPart.Position).Magnitude <= catchDistance then
+        -- Here we simulate catching by stopping the ball or triggering a catch animation
+        -- This would be specific to the game's mechanics
+        -- Example: You could trigger an animation or set ball velocity to 0, but this depends on the game
+        ball.Velocity = Vector3.new(0, 0, 0)  -- Stop ball movement (simplified)
+        print("Ball caught!")
+    end
+end
+
+-- Main loop that checks for ball and moves the player
+while true do
+    wait(0.1)  -- Short wait to prevent high CPU usage
+    findBall()  -- Look for the ball in the game
+    if ball then
+        moveToBall()  -- Move the player toward the ball
+        catchBall()  -- Simulate catching action
+    end
+end
+
+   end,
+})
+   end,
+})
